@@ -11,6 +11,7 @@ import datetime
 from typing import Optional
 
 class UserSchema(SQLModel):
+    id: int
     name: Optional[str] = Field(default=None)
     username: str = Field(default=None)
     password: Optional[str] = Field(default=None)

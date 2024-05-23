@@ -1,19 +1,27 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, Path, Query, Cookie
-from models.user_models import UserSchema, UserRegister
-from sqlmodel import Session
+from models.user_models import UserSchema, UserRegister, AnonymousUser
+from sqlmodel import Session, select
 from config.database import engine
+from repository.user_repo import *
+from repository.posts_repo import *
 
 user_router = APIRouter()
 
 @user_router.post("/register", tags=["creator"])
-def register(user: UserRegister):
+async def register(user: UserRegister):
+    user = AnonymousUser(name=user.name, username=user.username, password=user.password, id=user.id)
+    add_user_to_db(user)
+    return {'message': "added"}
     
-    return {"username": user.username, "password": user.password}
-
+    
 @user_router.post("/login", tags=["creator"])
-def login(user: UserSchema):
+async def login(user: UserSchema):
+    return
+
+@user_router.get("/users", tags=["users"])
+async def get_users():
     with Session(engine) as session:
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-    return {"username": user.username, "password": user.password}
+        statement = select(AnonymousUser)
+        users = session.exec(statement=statement).all()
+    
+    return users
