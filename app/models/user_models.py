@@ -6,30 +6,36 @@ if typing.TYPE_CHECKING:
     from .post_models import Post
 
 
-
 import datetime
 from typing import Optional
 
+
 class UserSchema(SQLModel):
-    id: int
     name: Optional[str] = Field(default=None)
     username: str = Field(default=None)
     password: Optional[str] = Field(default=None)
-    
-    
+
 
 class AnonymousUser(UserSchema, table=True):
-    __tablename__ = "anonymous_user"
+    __tablename__ = "anonymoususer"
     id: Optional[int] = Field(default=None, primary_key=True)
-    
+
     posts: list["Post"] = Relationship(back_populates="wall_creator")
-    
-    
-class UserRegister(UserSchema):
+
+
+class UserRegister(SQLModel):
+    name: Optional[str] = Field(default=None)
+    username: str = Field(default=None)
+    password: Optional[str] = Field(default=None)
     password2: Optional[str] = Field(default=None)
-    
-    @validator('password2')
+
+    @validator("password2")
     def passwords_match(cls, v, values, **kwargs):
-        if 'password' in values and v != values['password']:
-            raise ValueError('Passwords do not match')
+        if "password" in values and v != values["password"]:
+            raise ValueError("Passwords do not match")
         return v
+
+
+class UserLogin(SQLModel):
+    username: str = Field(default=None)
+    password: Optional[str] = Field(default=None)
