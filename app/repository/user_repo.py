@@ -18,3 +18,6 @@ def add_user_to_db(user: AnonymousUser):
         session.add(user)
         session.commit()
         print(user)
+        
+def generate_username(name: str):
+    return name+str(uuid.uuid4()).strip("-")[0]
