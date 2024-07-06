@@ -16,7 +16,8 @@ async def register(user: UserRegister):
         if u.username == user.username:
             raise HTTPException(status_code=400, detail="Username already exists")
     hashed_pwd = AuthHandler().get_password_hash(user.password)
-    user = AnonymousUser(name=user.name, username=user.username, password=hashed_pwd)
+    username = generate_username(user.name)
+    user = AnonymousUser(name=user.name, username=username, password=hashed_pwd)
     add_user_to_db(user)
     return {"message": "added"}
 

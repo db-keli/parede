@@ -1,14 +1,15 @@
 import typing
+import uuid
 from sqlmodel import SQLModel, Field, Relationship
-from pydantic import typing, EmailStr, validator
+from pydantic import typing, validator
 
 if typing.TYPE_CHECKING:
     from .post_models import Post
 
-
-import datetime
 from typing import Optional
 
+def generate_username(name: str):
+    return name+str(uuid.uuid4()).strip("-")[0]
 
 class UserSchema(SQLModel):
     name: Optional[str] = Field(default=None)
@@ -25,7 +26,7 @@ class AnonymousUser(UserSchema, table=True):
 
 class UserRegister(SQLModel):
     name: Optional[str] = Field(default=None)
-    username: str = Field(default=None)
+    username: str = Field(default=generate_username)
     password: Optional[str] = Field(default=None)
     password2: Optional[str] = Field(default=None)
 
